@@ -1,0 +1,71 @@
+﻿@model PruebaTecnica.Models.Orden
+
+@{ ViewData["Title"] = "Create";
+    
+}
+
+<div class="card">
+    <div class="card-header">
+        
+        <div class="col-md-6 float-right">
+            <a class="btn btn-primary float-right" id="guardarOrden" href="#" role="button">Guardar</a>
+        </div>
+        
+    </div>
+    <div class="card-body">
+        <form id="formOrden" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="ClienteId" class="control-label">Cliente</label>
+                    <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Fecha" class="control-label"></label>
+                    <input asp-for="Fecha" value=  class="form-control" />
+                    <span asp-validation-for="Fecha" class="text-danger"></span>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="card">
+              <div class="card-header float-right">
+                 <a class="btn btn-primary float-right" id="agregarProducto" href="#" role="button">Agregar Producto</a>
+              </div>
+              <div class="card-body">
+                <table class="table" style="width:100%" id="ordenProducto_table">
+                  <thead>
+                      <tr>
+                          <th>
+                              Codigo
+                          </th>
+                          <th>
+                              Producto
+                          </th>
+                          <th>
+                              Cantidad
+                          </th>
+                          <th>
+                              Precio
+                          </th>
+                          <th></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+
+
+
+}
