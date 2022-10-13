@@ -55,7 +55,7 @@
   
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id"><i data-feather="edit-2"></i></a>
+                            <a asp-action="Edit" id="editarOrden" data-id="@item.Id"><i data-feather="edit-2"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id"><i data-feather="eye"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.Id"><i data-feather="trash-2"></i></a>
                         </td>
@@ -87,7 +87,7 @@
 
 <!--Modal para buscar los clientes -->
 <div class="modal fade" id="clienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Clientes</h5>
@@ -112,6 +112,10 @@
                     <tbody id="clienteTable_body">
                     </tbody>
                 </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" data-dismiss="modal" id="btnSeleccionarCliente" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>

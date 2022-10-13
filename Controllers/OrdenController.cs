@@ -39,8 +39,11 @@ namespace PruebaTecnica.Controllers
             }
 
             var orden = await _context.Ordens
-                .Include(o => o.Cliente)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                      .Include(o => o.Cliente)
+                      .Include(a => a.Detalles)
+                      .ThenInclude(a => a.Producto)
+                      .FirstOrDefaultAsync(m => m.Id == id);
+
             if (orden == null)
             {
                 return NotFound();
@@ -88,6 +91,7 @@ namespace PruebaTecnica.Controllers
             return View(orden);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,13 +99,18 @@ namespace PruebaTecnica.Controllers
                 return NotFound();
             }
 
-            var orden = await _context.Ordens.FindAsync(id);
+            var orden = await _context.Ordens
+                      .Include(o => o.Cliente)
+                      .Include(a => a.Detalles)
+                      .ThenInclude(a => a.Producto)
+                      .FirstOrDefaultAsync(m => m.Id == id);
+
             if (orden == null)
             {
                 return NotFound();
             }
             Dropdowns(orden.ClienteId);
-            return View(orden);
+            return PartialView("~/Views/Orden/partials/_edit.cshtml",orden);
         }
 
         [HttpPost]
@@ -113,10 +122,23 @@ namespace PruebaTecnica.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
+
+                    var nuevosProductos = orden.Detalles.Where(a => a.Id == 0).ToList();
+                    foreach (var item in nuevosProductos)
+                    {
+                        _context.Add(item);
+                    }
+
+                    var ProductosExistentes = orden.Detalles.Where(a => a.Id != 0).ToList();
+                    foreach (var item in ProductosExistentes)
+                    {
+                        _context.Update(item);
+                    }
+
                     _context.Update(orden);
                     await _context.SaveChangesAsync();
                 }
@@ -130,11 +152,13 @@ namespace PruebaTecnica.Controllers
                     {
                         throw;
                     }
+
+                    Dropdowns(orden.ClienteId);
+                    return View(orden);
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            Dropdowns(orden.ClienteId);
-            return View(orden);
+            //}
+
         }
 
 

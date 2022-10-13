@@ -5,42 +5,9 @@ $(function () {
     var orden_Producto;
     var list_productos = [];
        
-    $('#orden_table').DataTable({
-
-    });  
+    $('#orden_table').DataTable({});
 
 
-    $("body").on("click", "#btnCliente", function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            type: 'GET',
-            dataType: 'Json',
-            url: '/Cliente/GetClientes/',
-            success: function (result) {
-                let html = '';
-                $('#ordenModalBody').html("");
-                if (result.length > 0) {
-                    console.log(result)
-
-                    result.forEach(cliente => {
-                        html = ` <tr> <td></td> <td>${cliente.codigo}</td> <td>${cliente.nombres} ${cliente.apellidos}</td> </tr>`;
-                    })
-                    console.log($('#clienteTable_body').html());
-                    $('#clienteTable_body').html(html);
-                    $('#clienteModal').modal('show');
-                }
-
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-
-
-    })
-
-        
     $("body").on("click", "#openModalOrden", function (e) {
         e.preventDefault();
 
@@ -62,14 +29,105 @@ $(function () {
                 console.log(error);
             }
         });
-        
-        
+
+
     })
 
-
-    $('#ordenModal').on('shown.bs.modal', function (e) {
+    $("body").on("click", "#editarOrden", function (e) {
         e.preventDefault();
 
+        let id = $(this).data('id');
+
+        $.ajax({
+            type: 'GET',
+            dataType: 'html',
+            url: `/Orden/Edit/${id}`,
+            success: function (result) {
+
+                if (result.length > 0) {
+
+                    $('#ordenModalBody').html("");
+                    $('#ordenModalBody').html(result);
+                    productos();
+                    cargarProductos(id);
+
+                    $('#ordenModal').modal('show');
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+
+    })
+
+    function cargarProductos(ordenId) {
+
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: `/Producto/GetProductosByOrdenId/`,
+            data: { ordenId },
+            success: function (result) {
+
+                
+                $('#ordenProducto_table tbody').html("");
+                if (result.length > 0) {
+
+                    let html = '';
+                    result.forEach(fila => {
+
+                        let random = Math.floor((Math.random() * 100000) + 1);
+
+                        let index = `<input type="hidden" name="Detalles.index" value="${random}"/>
+                                <input type="hidden" id="Detalles_${random}_Id" name="Detalles[${random}].Id" value="${fila.id}" />
+                                <input type="hidden" id="Detalles_${random}_OrdenId" name="Detalles[${random}].OrdenId" value="${fila.ordenId}" />
+                                <input type="hidden" id="Detalles_${random}_ProductoId" name="Detalles[${random}].ProductoId" value="${fila.productoId}" />
+                                <input type="hidden" id="Detalles_${random}_Cantidad" name="Detalles[${random}].Cantidad" value="${fila.cantidad}" />
+                                <input type="hidden" id="Detalles_${random}_Precio" name="Detalles[${random}].Precio" value="${fila.precio}" />
+                                <input type="text" readOnly=true class="form-control" id="codigo" value="${fila.producto.codigo}" >`;
+
+                        html = `<tr><td>${index}</td>
+                            <td>${
+
+                            `<select size="1" value="${fila.productoId}" id="select_Productos" name="select_Productos" class="form-control" >
+                                <option value="0" >
+                                    --Seleccionar el producto--
+                                </option>
+                                    ${
+                        list_productos.map(item => {
+                           
+                            return `<option value="${item.id}" ${item.id == fila.productoId ? 'selected="selected"':""} > ${item.nombre} </option>`;
+                                        })
+                                     }
+                            </select>`
+
+
+                            }</td>
+
+
+                            <td><input type="number" min=1 placeholder="0" class="form-control" id="cantidad" value="${fila.cantidad}" /></td>
+                            <td><input type="number" readOnly=true min=0 class="form-control" id="precio" value="${fila.precio}" /> </td>
+                            <td><input type="number" readOnly=true  class="form-control" id="importe" value="${fila.cantidad * fila.precio}" /> </td>
+                            <td><button type="button" id="btnEliminarRow" class="btn btn-danger">x</button></tr>`;
+                        console.log(fila.cantidad)
+                        $('#ordenProducto_table tbody').append(html);
+
+                    });
+
+                   
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+    }
+
+    function productos() {
         $.ajax({
             type: 'GET',
             dataType: 'json',
@@ -81,11 +139,67 @@ $(function () {
                 console.log(error);
             }
         });
-        
+    }
+
+    $('#ordenModal').on('shown.bs.modal', function (e) {
+        e.preventDefault();
+
+        productos();
+
         orden_Producto = $('#ordenProducto_table').DataTable();
     });
 
 
+    $("body").on("click", "#btnCliente", function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'GET',
+            dataType: 'Json',
+            url: '/Cliente/GetClientes/',
+            success: function (result) {
+                
+                $('#clienteTable_body').html("");
+                if (result.length > 0) {
+     
+                    let html = '';
+                    result.forEach(cliente => {
+                        html += ` <tr> <td><input type="radio" data-cliente="${cliente.nombres} ${cliente.apellidos}" id="clienteId" name="clienteId" value="${cliente.id}" ></td>
+                                <td>${cliente.codigo}</td> <td>${cliente.nombres} ${cliente.apellidos}</td> </tr>`;
+                    })
+
+                    $('#clienteTable_body').append(html);
+                    $('#clienteModal').modal('show');
+
+                    if (!$.fn.dataTable.isDataTable("#cliente_table")) {
+                        $('#cliente_table').DataTable();
+                    }
+
+                    
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+
+    });
+
+    $('body').on('click', '#btnSeleccionarCliente', function (e) {
+        e.preventDefault();
+
+        var cliente = $("#clienteTable_body input[name=clienteId]:checked")[0];
+
+        let clienteId = $(cliente).val();
+        let clienteNombre = $(cliente).data('cliente');
+
+        $('#ClienteId').val(clienteId);
+        $('#clienteNombre').val(clienteNombre);
+
+    });
+        
     $('body').on('click', '#agregarProducto', function (e) {
         e.preventDefault();
 
@@ -103,6 +217,8 @@ $(function () {
         var random = Math.floor((Math.random() * 100000) + 1);
 
         let index = `<input type="hidden" name="Detalles.index" value="${random}"/>
+<input type="hidden" id="Detalles_${random}_Id" name="Detalles[${random}].Id" />
+<input type="hidden" id="Detalles_${random}_OrdenId" name="Detalles[${random}].OrdenId" />
 <input type="hidden" id="Detalles_${random}_ProductoId" name="Detalles[${random}].ProductoId" />
 <input type="hidden" id="Detalles_${random}_Cantidad" name="Detalles[${random}].Cantidad" />
 <input type="hidden" id="Detalles_${random}_Precio" name="Detalles[${random}].Precio" />
@@ -141,10 +257,15 @@ $(function () {
         //Columnas de la fila que se esta modificando.
         const columnas = fila.children;
 
+        const ordenId = $('#Id').val();
+
         //Completando los campos hidden para mapear con la propiedad de navegacion.
-        $(columnas[0].children[1]).val(productoId);//productoId
-        $(columnas[0].children[2]).val(1);//cantidad
-        $(columnas[0].children[3]).val(seleccionado.precio);//Precio
+        if (ordenId)
+            $(columnas[0].children[2]).val(ordenId);//OrdenId
+
+        $(columnas[0].children[3]).val(productoId);//productoId
+        $(columnas[0].children[4]).val(1);//cantidad
+        $(columnas[0].children[5]).val(seleccionado.precio);//Precio
 
         //Completando los campos Codigo y precio.
         $(columnas[0].lastChild).val(seleccionado.codigo);//codigo
@@ -170,6 +291,7 @@ $(function () {
         $(columnas[4].firstChild).val(precio * cantidad);//importe
 
     });
+
 
     $("body").on("click", "#guardarOrden", function (e) {
 
