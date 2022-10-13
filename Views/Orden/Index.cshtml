@@ -3,8 +3,6 @@
 @{ ViewData["Title"] = "Index"; }
 
 
-
-
 <div class="card">
     <div class="card-header">
         <div class="col-md-6">
@@ -19,10 +17,16 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Fecha)
+                        Número Orden
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Cliente)
+                        Fecha
+                    </th>
+                    <th>
+                        Cliente
+                    </th>
+                    <th>
+                        Productos
                     </th>
                     <th></th>
                 </tr>
@@ -32,15 +36,28 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Fecha)
+                            @item.NumeroOrden
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Cliente.Id)
+                            @item.Fecha.Date.ToString("dd/MM/yyyy")
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            @Html.DisplayFor(modelItem => item.Cliente.Nombres) @Html.DisplayFor(modelItem => item.Cliente.Apellidos)
+                        </td>
+                        <td>
+
+                           @foreach (var producto in item.Detalles)
+                           {
+
+                                @($"\n{producto.Producto.Nombre}");
+
+                           }                                        
+  
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id"><i data-feather="edit-2"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id"><i data-feather="eye"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id"><i data-feather="trash-2"></i></a>
                         </td>
                     </tr>
                 }
@@ -62,6 +79,39 @@
             </div>
             <div class="modal-body" id="ordenModalBody">
                 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal para buscar los clientes -->
+<div class="modal fade" id="clienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Clientes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="clienteModalBody">
+                <table class="table" style="width:100%" id="cliente_table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                Codigo
+                            </th>
+                            <th>
+                                Cliente
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="clienteTable_body">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

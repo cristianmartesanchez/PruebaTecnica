@@ -22,7 +22,11 @@ namespace PruebaTecnica.Controllers
         // GET: Orden
         public async Task<IActionResult> Index()
         {
-            var ordenes = _context.Ordens.Include(o => o.Cliente);
+            var ordenes = _context.Ordens
+                                  .Include(o => o.Cliente)
+                                  .Include(a => a.Detalles)
+                                  .ThenInclude(a => a.Producto);
+
             return View(await ordenes.ToListAsync());
         }
 
@@ -54,6 +58,7 @@ namespace PruebaTecnica.Controllers
             }).ToList();
 
             var productos = _context.Productos.ToList();
+            clientes.Add(new Cliente { Id = 0, Nombres = "--Seleccione un cliente--" });
 
             ViewBag.ClienteId = new SelectList(clientes, "Id", "Nombres", clienteId);
             ViewBag.Productos = new SelectList(productos, "Id", "Nombres", productoId);
@@ -70,8 +75,11 @@ namespace PruebaTecnica.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Orden orden)
         {
+
             if (ModelState.IsValid)
             {
+                var codigo = _context.Ordens.Count() + 1;
+                orden.NumeroOrden = $"{codigo:00000}-OC";
                 _context.Add(orden);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -10,11 +10,14 @@ namespace PruebaTecnica.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "El número de orden es obligatorio.", AllowEmptyStrings = true)]
+        public string NumeroOrden { get; set; }
         [Required(ErrorMessage = "El cliente es obligatorio.")]
         [ForeignKey("Cliente")]
         public int ClienteId { get; set; }
         [Required(ErrorMessage = "La fecha es obligatoria.")]
-        public DateTime Fecha { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/aaaa}", ApplyFormatInEditMode = true)]
+        public DateTime Fecha { get; set; } 
 
         public Cliente Cliente { get; set; }
         [ForeignKey("OrdenId")]

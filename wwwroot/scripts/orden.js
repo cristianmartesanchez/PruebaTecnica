@@ -1,11 +1,45 @@
 ﻿
-$(document).ready(function () {
+$(function () {
 
+    
     var orden_Producto;
     var list_productos = [];
        
-    $('#orden_table').DataTable();
-       
+    $('#orden_table').DataTable({
+
+    });  
+
+
+    $("body").on("click", "#btnCliente", function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'GET',
+            dataType: 'Json',
+            url: '/Cliente/GetClientes/',
+            success: function (result) {
+                let html = '';
+                $('#ordenModalBody').html("");
+                if (result.length > 0) {
+                    console.log(result)
+
+                    result.forEach(cliente => {
+                        html = ` <tr> <td></td> <td>${cliente.codigo}</td> <td>${cliente.nombres} ${cliente.apellidos}</td> </tr>`;
+                    })
+                    console.log($('#clienteTable_body').html());
+                    $('#clienteTable_body').html(html);
+                    $('#clienteModal').modal('show');
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+
+    })
+
         
     $("body").on("click", "#openModalOrden", function (e) {
         e.preventDefault();
@@ -75,8 +109,9 @@ $(document).ready(function () {
 <input type="text" readOnly=true class="form-control" id="codigo">`;
 
         let campos = [index,
-            row, `<input type="number" min=0 class="form-control" id="cantidad">`,
+            row, `<input type="number" min=1 placeholder="0" class="form-control" id="cantidad">`,
             `<input type="number" readOnly=true min=0 class="form-control" id="precio">`,
+            `<input type="number" readOnly=true  class="form-control" id="importe">`,
             `<button type="button" id="btnEliminarRow" class="btn btn-danger">x</button>`]
 
         orden_Producto.row.add(campos).draw(false);
@@ -108,15 +143,18 @@ $(document).ready(function () {
 
         //Completando los campos hidden para mapear con la propiedad de navegacion.
         $(columnas[0].children[1]).val(productoId);//productoId
+        $(columnas[0].children[2]).val(1);//cantidad
         $(columnas[0].children[3]).val(seleccionado.precio);//Precio
 
         //Completando los campos Codigo y precio.
-        $(columnas[0].lastChild).val(seleccionado.codigo);
-        $(columnas[3].firstChild).val(seleccionado.precio);
+        $(columnas[0].lastChild).val(seleccionado.codigo);//codigo
+        $(columnas[2].firstChild).val(1);//cantidad
+        $(columnas[3].firstChild).val(seleccionado.precio);//precio
+        $(columnas[4].firstChild).val(seleccionado.precio);//importe
 
     });
 
-    $("body").on("keyup", "#cantidad", function (e) {
+    $("body").on("keyup, change", "#cantidad", function (e) {
         e.preventDefault();
         let cantidad = $(this).val();
 
@@ -128,7 +166,8 @@ $(document).ready(function () {
 
         //Completando los campos hidden para mapear con la propiedad de navegacion.
         $(columnas[0].children[2]).val(cantidad);//cantidad
-        console.log(columnas[0].children[2])
+        let precio = Number.parseFloat($(columnas[3].firstChild).val());
+        $(columnas[4].firstChild).val(precio * cantidad);//importe
 
     });
 

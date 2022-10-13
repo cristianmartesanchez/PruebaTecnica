@@ -25,8 +25,15 @@ namespace PruebaTecnica.Controllers
 			return View(await _context.Clientes.ToListAsync());
 		}
 
-		// GET: Cliente/Details/5
-		public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        public JsonResult GetClientes()
+        {
+            var clientes = _context.Clientes.ToList();
+            return Json(clientes);
+        }
+
+        // GET: Cliente/Details/5
+        public async Task<IActionResult> Details(int? id)
 		{
 			if (id == null)
 			{
@@ -58,7 +65,9 @@ namespace PruebaTecnica.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Add(cliente);
+                var codigo = _context.Clientes.Count() + 1;
+                cliente.Codigo = $"{codigo:00000}-C";
+                _context.Add(cliente);
 				await _context.SaveChangesAsync();
 				return RedirectToAction(nameof(Index));
 			}
