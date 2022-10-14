@@ -14,6 +14,7 @@ namespace PruebaTecnica.Models
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
         public double Precio { get; set; }
+        public bool Activo { get; set; } = true;   
         public Orden Orden { get; set; }
         public Producto Producto { get; set; }
     }

@@ -111,7 +111,7 @@ $(function () {
                             <td><input type="number" min=1 placeholder="0" class="form-control" id="cantidad" value="${fila.cantidad}" /></td>
                             <td><input type="number" readOnly=true min=0 class="form-control" id="precio" value="${fila.precio}" /> </td>
                             <td><input type="number" readOnly=true  class="form-control" id="importe" value="${fila.cantidad * fila.precio}" /> </td>
-                            <td><button type="button" id="btnEliminarRow" class="btn btn-danger">x</button></tr>`;
+                            <td><button type="button" data-ordenId="${fila.ordenId}" data-productoId="${fila.productoId}" id="btnEliminarProducto" class="btn btn-success">x</button></tr>`;
                         console.log(fila.cantidad)
                         $('#ordenProducto_table tbody').append(html);
 
@@ -126,6 +126,37 @@ $(function () {
         });
 
     }
+
+    $("body").on("click", "#btnEliminarProducto", function (e) {
+        e.preventDefault();
+
+        if (confirm("Seguro que quieres eliminar el producto?")) {
+
+            const fila = $(this)[0].parentElement.parentElement;
+            let ordenId = $(this).data('ordenid');
+            let productoId = $(this).data('productoid');
+
+            $.ajax({
+                type: 'POST',
+                url: '/Orden/BorrarProductoDetalle/',
+                data: { ordenId, productoId },
+                success: function (result) {
+
+                    if (result) {
+
+                        
+                        orden_Producto.row(fila).remove().draw(false);
+                        
+                    }
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+        }
+    })
 
     function productos() {
         $.ajax({
@@ -292,8 +323,8 @@ $(function () {
 
     });
 
-
     $("body").on("click", "#guardarOrden", function (e) {
+        e.preventDefault();
 
         $("#formOrden").submit();
 

@@ -22,12 +22,20 @@ namespace PruebaTecnica.Controllers
         // GET: Orden
         public async Task<IActionResult> Index()
         {
-            var ordenes = _context.Ordens
+            var ordenes = await _context.Ordens
                                   .Include(o => o.Cliente)
                                   .Include(a => a.Detalles)
-                                  .ThenInclude(a => a.Producto);
+                                  .ThenInclude(a => a.Producto)
+                                  .ToListAsync();
 
-            return View(await ordenes.ToListAsync());
+            ordenes.ForEach(o =>
+            {
+
+                o.Detalles = o.Detalles.Where(a => a.Activo == true).ToList();
+
+            });
+
+            return View(ordenes);
         }
 
         // GET: Orden/Details/5
@@ -42,12 +50,15 @@ namespace PruebaTecnica.Controllers
                       .Include(o => o.Cliente)
                       .Include(a => a.Detalles)
                       .ThenInclude(a => a.Producto)
-                      .FirstOrDefaultAsync(m => m.Id == id);
+                      .FirstOrDefaultAsync(m => m.Id == id );
+
 
             if (orden == null)
             {
                 return NotFound();
             }
+
+            orden.Detalles = orden.Detalles.Where(a => a.Activo == true).ToList();
 
             return View(orden);
         }
@@ -109,6 +120,9 @@ namespace PruebaTecnica.Controllers
             {
                 return NotFound();
             }
+
+            orden.Detalles = orden.Detalles.Where(a => a.Activo == true).ToList();
+
             Dropdowns(orden.ClienteId);
             return PartialView("~/Views/Orden/partials/_edit.cshtml",orden);
         }
@@ -162,6 +176,22 @@ namespace PruebaTecnica.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<bool> BorrarProductoDetalle(int ordenId, int productoId)
+        {
+
+            if (!OrdenDetalleExists(ordenId, productoId))
+            {
+                return false;
+            }
+
+            var producto = await _context.OrdenDetalles.FirstOrDefaultAsync(a => a.OrdenId == ordenId && a.ProductoId == productoId);
+            producto.Activo = false;
+            _context.OrdenDetalles.Update(producto);
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -193,6 +223,11 @@ namespace PruebaTecnica.Controllers
         private bool OrdenExists(int id)
         {
             return _context.Ordens.Any(e => e.Id == id);
+        }
+
+        private bool OrdenDetalleExists(int ordenId, int productoId)
+        {
+            return _context.OrdenDetalles.Any(e => e.OrdenId == ordenId && e.ProductoId == productoId);
         }
     }
 }

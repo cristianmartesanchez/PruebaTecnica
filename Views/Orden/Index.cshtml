@@ -46,7 +46,7 @@
                         </td>
                         <td>
 
-                           @foreach (var producto in item.Detalles)
+                           @foreach (var producto in item.Detalles.Where(a => a.Activo == true))
                            {
 
                                 @($"\n{producto.Producto.Nombre}");

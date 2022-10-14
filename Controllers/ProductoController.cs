@@ -34,7 +34,7 @@ namespace PruebaTecnica.Controllers
         [HttpGet]
         public JsonResult GetProductosByOrdenId(int ordenId)
         {
-            var productos = _context.OrdenDetalles.Where(a => a.OrdenId == ordenId).Include(a => a.Producto).ToList();
+            var productos = _context.OrdenDetalles.Where(a => a.OrdenId == ordenId && a.Activo == true).Include(a => a.Producto).ToList();
             return Json(productos);
         }
 
