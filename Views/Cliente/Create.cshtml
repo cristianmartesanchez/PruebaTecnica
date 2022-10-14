@@ -4,45 +4,67 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="card">
+    <div class="card-header">
+        <div class="col-md-6">
+            Registrar Cliente
+        </div>
+        <div class="col-md-6 float-right">
+            <a class="btn btn-primary float-right" href="#" id="btnCrearCliente">Guardar</a>
+        </div>
+    </div>
+    <div class="card-body">
 
-<h4>Cliente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+        <form id="frm_cliente" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombres" class="control-label"></label>
-                <input asp-for="Nombres" class="form-control" />
-                <span asp-validation-for="Nombres" class="text-danger"></span>
+            <input asp-for="Codigo" type="hidden" value="0"  />
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="Nombres" class="control-label"></label>
+                    <input asp-for="Nombres" class="form-control" />
+                    <span asp-validation-for="Nombres" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Apellidos" class="control-label"></label>
+                    <input asp-for="Apellidos" class="form-control" />
+                    <span asp-validation-for="Apellidos" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="FechaNacimiento" class="control-label">Fecha Nacimiento</label>
+                    <input type="date" name="FechaNacimiento" id="FechaNacimiento" value="@( Model != null ? $"{Model.FechaNacimiento:yyyy-MM-dd}" : $"{DateTime.Now:yyyy-MM-dd}")" class="form-control" />
+                    <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Apellidos" class="control-label"></label>
-                <input asp-for="Apellidos" class="form-control" />
-                <span asp-validation-for="Apellidos" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaNacimiento" class="control-label"></label>
-                <input asp-for="FechaNacimiento" class="form-control" />
-                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
-            </div>
-            <div class="col form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
 
-        
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Telefono" class="control-label">Teléfono</label>
+                    <input asp-for="Telefono" class="form-control" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Correo" class="control-label">Correo</label>
+                    <input asp-for="Correo" class="form-control" />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label asp-for="Direccion" class="control-label">Dirección</label>
+                    <input asp-for="Direccion" class="form-control" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+            </div>
+
+        </form>
 
     </div>
 </div>
 
 
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/scripts/cliente.js"></script>
 }

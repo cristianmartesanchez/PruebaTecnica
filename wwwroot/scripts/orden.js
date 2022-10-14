@@ -275,7 +275,7 @@ $(function () {
 
     });
 
-    $("body").on("keyup, change", "#cantidad", function (e) {
+    $("body").on("change", "#cantidad", function (e) {
         e.preventDefault();
         let cantidad = $(this).val();
 
@@ -284,9 +284,9 @@ $(function () {
 
         //Columnas de la fila que se esta modificando.
         const columnas = fila.children;
-
+        console.log(cantidad)
         //Completando los campos hidden para mapear con la propiedad de navegacion.
-        $(columnas[0].children[2]).val(cantidad);//cantidad
+        $(columnas[0].children[4]).val(cantidad);//cantidad
         let precio = Number.parseFloat($(columnas[3].firstChild).val());
         $(columnas[4].firstChild).val(precio * cantidad);//importe
 

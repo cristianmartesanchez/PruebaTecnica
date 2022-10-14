@@ -16,7 +16,7 @@ namespace PruebaTecnica.Models
         [ForeignKey("Cliente")]
         public int ClienteId { get; set; }
         [Required(ErrorMessage = "La fecha es obligatoria.")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/aaaa}", ApplyFormatInEditMode = true)]
+        
         public DateTime Fecha { get; set; } 
 
         public Cliente Cliente { get; set; }

@@ -1,33 +1,30 @@
-﻿@model IEnumerable<PruebaTecnica.Models.Cliente>
+﻿@model IEnumerable<PruebaTecnica.Models.Producto>
 
 @{
-    ViewData["Title"] = "Clientes";
+    ViewData["Title"] = "Productos";
 }
 
 <div class="card">
     <div class="card-header">
         <div class="col-md-6">
-            Clientes
+            Productos
         </div>
         <div class="col-md-6 float-right">
-            <a class="btn btn-primary float-right" asp-action="Create" role="button">Crear cliente</a>
+            <a class="btn btn-primary float-right" asp-action="Create"  role="button">Crear producto</a>
         </div>
     </div>
     <div class="card-body">
-        <table class="table" id="cliente_table">
+        <table class="table" id="producto_table">
             <thead>
                 <tr>
                     <th>
                         Codigo
                     </th>
                     <th>
-                        Nombres
+                        Nombre
                     </th>
                     <th>
-                        Apellidos
-                    </th>
-                    <th>
-                        Teléfono
+                        Precio
                     </th>
                     <th></th>
                 </tr>
@@ -40,18 +37,15 @@
                             @item.Codigo
                         </td>
                         <td>
-                            @item.Nombres
+                            @item.Nombre
                         </td>
                         <td>
-                           @item.Apellidos
-                        </td>
-                        <td>
-                            @item.Telefono
+                            @item.Precio
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id"><i data-feather="edit-2"></i></a>
-                            <a asp-action="Details" asp-route-id="@item.Id"><i data-feather="eye"></i></a>
-                            <a  data-id="@item.Id" href="#" id="borrarCliente" ><i data-feather="trash-2"></i></a>
+                            <a asp-action="Detalle" asp-route-id="@item.Id"><i data-feather="eye"></i></a>
+                            <a data-id="@item.Id" href="#" id="borrarProducto"><i data-feather="trash-2"></i></a>
                         </td>
                     </tr>
                 }
@@ -62,6 +56,6 @@
 
 @section Scripts{
 
-    <script src="~/scripts/cliente.js"></script>
+    <script src="~/scripts/producto.js"></script>
 
 }

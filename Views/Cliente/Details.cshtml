@@ -1,36 +1,72 @@
 ﻿@model PruebaTecnica.Models.Cliente
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle";
 }
 
-<h1>Details</h1>
+<div class="card">
+    <div class="card-header">
+        <div class="col-md-6">
+           Cliente
+        </div>
+        <div class="col-md-6 float-right ">
+            <div class="btn-group float-right" role="group" aria-label="Third group">
+                <a asp-action="Edit" asp-route-id="@Model.Id"><i data-feather="edit-2"></i></a>
+            </div>
+            <div class="btn-group float-right" role="group" aria-label="Third group">
+                <a asp-action="Index"><i data-feather="list"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
 
-<div>
-    <h4>Cliente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombres)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombres)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Apellidos)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Apellidos)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaNacimiento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaNacimiento)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <form id="frm_cliente" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="Codigo" class="control-label">Código</label>
+                    <input asp-for="Codigo" readonly class="form-control disabled" />
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Nombres" class="control-label"></label>
+                    <input asp-for="Nombres" readonly class="form-control" />
+                    <span asp-validation-for="Nombres" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Apellidos" class="control-label"></label>
+                    <input asp-for="Apellidos" readonly class="form-control" />
+                    <span asp-validation-for="Apellidos" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="FechaNacimiento" class="control-label">Fecha Nacimiento</label>
+                    <input type="date" name="FechaNacimiento" readonly id="FechaNacimiento" value="@Model.FechaNacimiento.ToString("yyyy-MM-dd")" class="form-control" />
+                    <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Telefono" class="control-label">Teléfono</label>
+                    <input asp-for="Telefono" readonly class="form-control" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Correo" class="control-label">Correo</label>
+                    <input asp-for="Correo" readonly class="form-control" />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label asp-for="Direccion" class="control-label">Dirección</label>
+                    <input asp-for="Direccion" readonly class="form-control" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
 </div>

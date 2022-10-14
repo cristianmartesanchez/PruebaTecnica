@@ -16,6 +16,7 @@ namespace PruebaTecnica.Models
         [Required(ErrorMessage = "El precio es obligatorio")]
         public double Precio { get; set; }
 
+        public bool Activo { get; set; } = true;
 
     }
 }

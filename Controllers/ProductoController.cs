@@ -20,14 +20,14 @@ namespace PruebaTecnica.Controllers
 
         public async Task<IActionResult> Index()
         {
-
-            return View(await _context.Productos.ToListAsync());
+            var productos = await _context.Productos.Where(a => a.Activo == true).ToListAsync();
+            return View(productos);
         }
 
         [HttpGet]
         public JsonResult GetProductos()
         {
-            var productos =  _context.Productos.ToList();
+            var productos =  _context.Productos.Where(a => a.Activo == true).ToList();
             return Json(productos);
         }
 
@@ -66,6 +66,8 @@ namespace PruebaTecnica.Controllers
         {
             if (ModelState.IsValid)
             {
+                var codigo = _context.Productos.Count() + 1;
+                producto.Codigo = $"{codigo:00000}-PD";
                 _context.Add(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -120,7 +122,8 @@ namespace PruebaTecnica.Controllers
             return View(producto);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+
+        public async Task<IActionResult> Detalle(int? id)
         {
             if (id == null)
             {
@@ -133,19 +136,30 @@ namespace PruebaTecnica.Controllers
             {
                 return NotFound();
             }
+            else if (!producto.Activo)
+            {
+                return NotFound();
+            }
 
             return View(producto);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<bool> BorrarProducto(int productoId)
         {
-            var producto = await _context.Productos.FindAsync(id);
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            if (!ProductExists(productoId))
+            {
+                return false;
+            }
+
+            var producto = await _context.Productos.FindAsync(productoId);
+            producto.Activo = false;
+            _context.Productos.Update(producto);
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
         }
+
 
         private bool ProductExists(int id)
         {

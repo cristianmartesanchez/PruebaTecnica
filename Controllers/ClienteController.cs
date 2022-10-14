@@ -22,13 +22,15 @@ namespace PruebaTecnica.Controllers
 		// GET: Cliente
 		public async Task<IActionResult> Index()
 		{
-			return View(await _context.Clientes.ToListAsync());
+			var clientes = await _context.Clientes.Where(a => a.Activo == true).ToListAsync();
+
+            return View(clientes);
 		}
 
         [HttpGet]
         public JsonResult GetClientes()
         {
-            var clientes = _context.Clientes.ToList();
+            var clientes = _context.Clientes.Where(a => a.Activo == true).ToList();
             return Json(clientes);
         }
 
@@ -46,6 +48,10 @@ namespace PruebaTecnica.Controllers
 			{
 				return NotFound();
 			}
+			else if (!cliente.Activo)
+			{
+                return NotFound();
+            }
 
 			return View(cliente);
 		}
@@ -61,7 +67,7 @@ namespace PruebaTecnica.Controllers
 		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,Nombres,Apellidos,FechaNacimiento")] Cliente cliente)
+		public async Task<IActionResult> Create([Bind("Id,Codigo,Nombres,Apellidos,FechaNacimiento,Correo,Telefono,Direccion")] Cliente cliente)
 		{
 			if (ModelState.IsValid)
 			{
@@ -87,6 +93,9 @@ namespace PruebaTecnica.Controllers
 			{
 				return NotFound();
 			}
+			else if(!cliente.Activo){
+                return NotFound();
+            }
 			return View(cliente);
 		}
 
@@ -95,7 +104,7 @@ namespace PruebaTecnica.Controllers
 		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Nombres,Apellidos,FechaNacimiento")] Cliente cliente)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Codigo,Nombres,Apellidos,FechaNacimiento,Correo,Telefono,Direccion")] Cliente cliente)
 		{
 			if (id != cliente.Id)
 			{
@@ -154,7 +163,24 @@ namespace PruebaTecnica.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		private bool ClienteExists(int id)
+		[HttpPost]
+		public async Task<bool> BorrarCliente(int clienteId)
+		{
+
+			if(!ClienteExists(clienteId))
+			{
+				return false;
+			}
+
+            var cliente = await _context.Clientes.FindAsync(clienteId);
+			cliente.Activo = false;
+            _context.Clientes.Update(cliente);
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+
+        private bool ClienteExists(int id)
 		{
 			return _context.Clientes.Any(e => e.Id == id);
 		}

@@ -13,8 +13,12 @@ namespace PruebaTecnica.Models
         public string Nombres { get; set; }
         [Required(ErrorMessage = "El Apellido del cliente es obligatorio.")]
         public string Apellidos { get; set; }
-
-        public DateTime FechaNacimiento{ get; set; }
-
+        public DateTime FechaNacimiento { get; set; }
+        [DataType(DataType.EmailAddress, ErrorMessage = "Correo no valido.")]
+        public string Correo { get; set; }
+        [DataType(DataType.PhoneNumber, ErrorMessage = "Telefono no valido.")]
+        public string Telefono { get; set; }
+        public string Direccion { get; set; }
+        public bool Activo { get; set; } = true;
     }
 }
